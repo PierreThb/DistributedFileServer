@@ -5,6 +5,7 @@
  */
 package distributedfileserver;
 
+import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.util.Map;
 
@@ -12,7 +13,7 @@ import java.util.Map;
  *
  * @author Pierre
  */
-public interface FileServer {
+public interface FileServer extends Remote{
 
     public Map getFiles(String basDir) throws RemoteException;
 
@@ -21,4 +22,6 @@ public interface FileServer {
     public void createFile(String filename, boolean isDir) throws RemoteException;
 
     public void deleteFile(String filename) throws RemoteException;
+    
+    public void openFile(String filename) throws RemoteException;
 }

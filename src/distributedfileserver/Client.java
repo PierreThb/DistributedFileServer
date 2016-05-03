@@ -7,6 +7,7 @@ package distributedfileserver;
 
 import java.net.MalformedURLException;
 import java.rmi.Naming;
+import java.rmi.NotBoundException;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 
@@ -14,17 +15,11 @@ import java.rmi.RemoteException;
  *
  * @author Pierre
  */
-public class RMIFileServer {
-
-    public static void main(String[] args) {
-        try {
-            String host = "localhost";
-            if (args.length == 1) {
-                host = args[0];
-            }
-            Naming.rebind("//" + host + "/FileServer", new FileServerImpl());
-        } catch (RemoteException | MalformedURLException e) {
-
-        }
+public class Client {
+    
+    public void getFileServerImpl() throws RemoteException, MalformedURLException, NotBoundException{
+        String servername = "//localhost/FileServer";
+        
+        FileServerImpl serverImpl = (FileServerImpl) Naming.lookup(servername);
     }
 }

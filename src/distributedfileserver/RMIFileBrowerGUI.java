@@ -9,12 +9,12 @@ package distributedfileserver;
  *
  * @author Pierre
  */
-public class RMIFileBrowser extends javax.swing.JFrame {
+public class RMIFileBrowerGUI extends javax.swing.JFrame {
 
     /**
      * Creates new form RMIFileBrowser
      */
-    public RMIFileBrowser() {
+    public RMIFileBrowerGUI() {
         initComponents();
     }
 
@@ -260,20 +260,21 @@ public class RMIFileBrowser extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(RMIFileBrowser.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(RMIFileBrowerGUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(RMIFileBrowser.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(RMIFileBrowerGUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(RMIFileBrowser.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(RMIFileBrowerGUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(RMIFileBrowser.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(RMIFileBrowerGUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
         //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new RMIFileBrowser().setVisible(true);
+                new RMIFileBrowerGUI().setVisible(true);
             }
         });
     }
