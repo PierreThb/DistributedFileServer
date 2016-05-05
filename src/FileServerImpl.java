@@ -26,14 +26,6 @@ public class FileServerImpl extends UnicastRemoteObject implements FileServer {
     public FileServerImpl() throws RemoteException {
         super();
     }
-<<<<<<< HEAD
-=======
-    
-    @Override
-    public Map getFiles(String baseDir) throws RemoteException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
->>>>>>> 5b58ba539e6d12417fe7e43b9db94df9053353cd
 
     @Override
     public ArrayList<String> getFiles(String basDir) throws RemoteException {
@@ -84,6 +76,11 @@ public class FileServerImpl extends UnicastRemoteObject implements FileServer {
     @Override
     public String helloClient(String name) throws RemoteException {
         return "Here is the server, welcome " + name;
+    }
+
+    @Override
+    public void openFile(String filename) throws RemoteException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
 }
