@@ -1,21 +1,41 @@
+
+import java.net.MalformedURLException;
+import java.rmi.Naming;
+import java.rmi.NotBoundException;
+import java.rmi.RemoteException;
+import java.util.ArrayList;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.DefaultListModel;
+import javax.swing.JFileChooser;
+
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
-
 /**
  *
  * @author Pierre
  */
 public class RMIFileBrowerGUI extends javax.swing.JFrame {
 
+    private FileServer fileServer;
+    DefaultListModel model = new DefaultListModel();
+    private String currentDirr = "";
+
     /**
      * Creates new form RMIFileBrowser
      */
     public RMIFileBrowerGUI() {
         initComponents();
+        button_add.setEnabled(false);
+        button_delete.setEnabled(false);
+        button_enter.setEnabled(false);
+        button_parent.setEnabled(false);
+        button_read.setEnabled(false);
+        button_search.setEnabled(false);
     }
 
     /**
@@ -39,14 +59,14 @@ public class RMIFileBrowerGUI extends javax.swing.JFrame {
         jScrollPane1 = new javax.swing.JScrollPane();
         list_files = new javax.swing.JList<>();
         jScrollPane2 = new javax.swing.JScrollPane();
-        diplay_area = new javax.swing.JTextArea();
+        display_area = new javax.swing.JTextArea();
         jPanel3 = new javax.swing.JPanel();
         button_parent = new javax.swing.JButton();
         button_enter = new javax.swing.JButton();
         button_search = new javax.swing.JButton();
-        button_download = new javax.swing.JButton();
-        button_upload = new javax.swing.JButton();
+        button_add = new javax.swing.JButton();
         button_delete = new javax.swing.JButton();
+        button_read = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -67,53 +87,56 @@ public class RMIFileBrowerGUI extends javax.swing.JFrame {
             }
         });
 
-        jLabel3.setText("Name ");
-
-        field_name.setText("Type your name here");
+        jLabel3.setText("Type your name");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(40, 40, 40)
+                .addComponent(jLabel3)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(field_name)
-                .addGap(49, 49, 49)
+                .addComponent(field_name, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(35, 35, 35)
                 .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(field_servername, javax.swing.GroupLayout.PREFERRED_SIZE, 109, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGap(32, 32, 32)
                 .addComponent(jLabel2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(field_port)
-                .addGap(18, 18, 18)
-                .addComponent(button_connect, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGap(55, 55, 55))
+                .addComponent(field_port, javax.swing.GroupLayout.DEFAULT_SIZE, 60, Short.MAX_VALUE)
+                .addGap(34, 34, 34)
+                .addComponent(button_connect, javax.swing.GroupLayout.DEFAULT_SIZE, 105, Short.MAX_VALUE)
+                .addGap(39, 39, 39))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
-                    .addComponent(jLabel3)
                     .addComponent(field_name, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel1)
                     .addComponent(field_servername, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel2)
                     .addComponent(field_port, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(button_connect))
+                    .addComponent(button_connect)
+                    .addComponent(jLabel3))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         jPanel2.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
+        list_files.setModel(new javax.swing.AbstractListModel<String>() {
+            String[] strings = { "dir1", "dir2", "dir3" };
+            public int getSize() { return strings.length; }
+            public String getElementAt(int i) { return strings[i]; }
+        });
         jScrollPane1.setViewportView(list_files);
 
-        diplay_area.setColumns(20);
-        diplay_area.setRows(5);
-        jScrollPane2.setViewportView(diplay_area);
+        display_area.setColumns(20);
+        display_area.setRows(5);
+        jScrollPane2.setViewportView(display_area);
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -153,17 +176,10 @@ public class RMIFileBrowerGUI extends javax.swing.JFrame {
             }
         });
 
-        button_download.setText("Download File");
-        button_download.addActionListener(new java.awt.event.ActionListener() {
+        button_add.setText("Add File");
+        button_add.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                button_downloadActionPerformed(evt);
-            }
-        });
-
-        button_upload.setText("Upload File");
-        button_upload.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                button_uploadActionPerformed(evt);
+                button_addActionPerformed(evt);
             }
         });
 
@@ -171,6 +187,13 @@ public class RMIFileBrowerGUI extends javax.swing.JFrame {
         button_delete.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 button_deleteActionPerformed(evt);
+            }
+        });
+
+        button_read.setText("Read File");
+        button_read.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                button_readActionPerformed(evt);
             }
         });
 
@@ -184,17 +207,17 @@ public class RMIFileBrowerGUI extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(button_enter)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(button_search)
+                .addComponent(button_read, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(button_download)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(button_upload)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(button_add)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(button_delete)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(button_search)
+                .addGap(21, 21, 21))
         );
 
-        jPanel3Layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {button_delete, button_download, button_enter, button_parent, button_search, button_upload});
+        jPanel3Layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {button_add, button_delete, button_enter, button_parent, button_search});
 
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -204,9 +227,9 @@ public class RMIFileBrowerGUI extends javax.swing.JFrame {
                     .addComponent(button_parent)
                     .addComponent(button_enter)
                     .addComponent(button_search)
-                    .addComponent(button_download)
-                    .addComponent(button_upload)
-                    .addComponent(button_delete))
+                    .addComponent(button_add)
+                    .addComponent(button_delete)
+                    .addComponent(button_read))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -232,35 +255,94 @@ public class RMIFileBrowerGUI extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void button_connectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_connectActionPerformed
-        Client client = new Client(field_name.getText());
-        String servername = field_servername.getText();
-        String port = field_port.getText();
-        client.getFileServerImpl(servername, port);
+        String str = null;
+        try {
+            fileServer = findFileServer("localhost:1099/FileServer");
+            str = fileServer.helloClient(field_name.getText());
+        } catch (NotBoundException | MalformedURLException | RemoteException ex) {
+            Logger.getLogger(RMIFileBrowerGUI.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        display_area.setText(str);
+        this.stop();
+        button_enter.setEnabled(true);
+        button_add.setEnabled(true);
+        button_search.setEnabled(true);
+        button_delete.setEnabled(true);
     }//GEN-LAST:event_button_connectActionPerformed
 
     private void button_parentActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_parentActionPerformed
-        // TODO add your handling code here:
+        button_read.setEnabled(false);
+        button_parent.setEnabled(false);
+        button_enter.setEnabled(true);
+        model.clear();
+        model.addElement("dir1");
+        model.addElement("dir2");
+        model.addElement("dir3");
+        list_files.setModel(model);
+
     }//GEN-LAST:event_button_parentActionPerformed
 
     private void button_enterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_enterActionPerformed
-        // TODO add your handling code here:
+        button_read.setEnabled(true);
+        button_parent.setEnabled(true);
+        button_enter.setEnabled(false);
+        String folder = list_files.getSelectedValue();
+        currentDirr = folder;
+        model.clear();
+
+        try {
+            ArrayList<String> strings = fileServer.getFiles(folder);
+
+            for (String string : strings) {
+                model.addElement(string);
+            }
+            list_files.setModel(model);
+        } catch (RemoteException ex) {
+            Logger.getLogger(RMIFileBrowerGUI.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_button_enterActionPerformed
 
     private void button_searchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_searchActionPerformed
-        // TODO add your handling code here:
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setVisible(true);
+
     }//GEN-LAST:event_button_searchActionPerformed
 
-    private void button_downloadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_downloadActionPerformed
+    private void button_addActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_addActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_button_downloadActionPerformed
-
-    private void button_uploadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_uploadActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_button_uploadActionPerformed
+    }//GEN-LAST:event_button_addActionPerformed
 
     private void button_deleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_deleteActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_button_deleteActionPerformed
+
+    private void button_readActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_readActionPerformed
+        ArrayList<String> str = null;
+        String file = list_files.getSelectedValue();
+        try {
+            str = fileServer.openReadFile(file);
+        } catch (RemoteException ex) {
+            Logger.getLogger(RMIFileBrowerGUI.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        String mystring = "";
+        for (String string : str) {
+            mystring = mystring + string;
+        }
+        display_area.setText(mystring);
+    }//GEN-LAST:event_button_readActionPerformed
+
+    private void stop() {
+        field_name.setEnabled(false);
+        field_port.setEnabled(false);
+        field_servername.setEnabled(false);
+        button_connect.setEnabled(false);
+        button_parent.setEnabled(false);
+        button_read.setEnabled(false);
+    }
+
+    private FileServer findFileServer(String service) throws NotBoundException, MalformedURLException, RemoteException {
+        return (FileServer) Naming.lookup("rmi://" + service);
+    }
 
     /**
      * @param args the command line arguments
@@ -299,14 +381,14 @@ public class RMIFileBrowerGUI extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton button_add;
     private javax.swing.JButton button_connect;
     private javax.swing.JButton button_delete;
-    private javax.swing.JButton button_download;
     private javax.swing.JButton button_enter;
     private javax.swing.JButton button_parent;
+    private javax.swing.JButton button_read;
     private javax.swing.JButton button_search;
-    private javax.swing.JButton button_upload;
-    private javax.swing.JTextArea diplay_area;
+    private javax.swing.JTextArea display_area;
     private javax.swing.JTextField field_name;
     private javax.swing.JTextField field_port;
     private javax.swing.JTextField field_servername;

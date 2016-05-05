@@ -4,9 +4,18 @@
  * and open the template in the editor.
  */
 
+import java.awt.List;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.ArrayList;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -14,18 +23,26 @@ import java.util.Map;
  */
 public class FileServerImpl extends UnicastRemoteObject implements FileServer {
 
-    public FileServerImpl() throws RemoteException{
+    public FileServerImpl() throws RemoteException {
         super();
-    }
-    
-    @Override
-    public Map getFiles(String basDir) throws RemoteException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public Map getFiles(String baseDir, boolean upper) throws RemoteException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public ArrayList<String> getFiles(String basDir) throws RemoteException {
+        File folder = new File("files/"+basDir);
+        File[] listOfFiles = folder.listFiles();
+        ArrayList<String> strings = new ArrayList<>();
+        
+        int i = 0;
+        for(File file : listOfFiles){
+            System.out.println("pass here");
+            if(file.isFile()){
+                strings.add(i, file.toString());
+                i++;
+            }
+        }
+        
+        return strings;
     }
 
     @Override
@@ -39,13 +56,26 @@ public class FileServerImpl extends UnicastRemoteObject implements FileServer {
     }
 
     @Override
-    public void openFile(String filename) throws RemoteException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public ArrayList<String> openReadFile(String filename) throws RemoteException {
+        ArrayList<String> records = new ArrayList<>();
+        try {
+            try (BufferedReader reader = new BufferedReader(new FileReader(filename))) {
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    records.add(line);
+                }
+            }
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(FileServerImpl.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(FileServerImpl.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return records;
     }
 
     @Override
     public String helloClient(String name) throws RemoteException {
-        return "Here is the server, welcome "+name;
+        return "Here is the server, welcome " + name;
     }
 
 }
