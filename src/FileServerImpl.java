@@ -3,17 +3,21 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package distributedfileserver;
 
 import java.rmi.RemoteException;
+import java.rmi.server.UnicastRemoteObject;
 import java.util.Map;
 
 /**
  *
  * @author Pierre
  */
-public class FileServerImpl implements FileServer {
+public class FileServerImpl extends UnicastRemoteObject implements FileServer {
 
+    public FileServerImpl() throws RemoteException{
+        super();
+    }
+    
     @Override
     public Map getFiles(String basDir) throws RemoteException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
@@ -37,6 +41,11 @@ public class FileServerImpl implements FileServer {
     @Override
     public void openFile(String filename) throws RemoteException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public String helloClient(String name) throws RemoteException {
+        return "Here is the server, welcome "+name;
     }
 
 }
