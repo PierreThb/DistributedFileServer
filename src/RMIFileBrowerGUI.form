@@ -29,12 +29,18 @@
           <Group type="102" attributes="0">
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
-                      <EmptySpace min="-2" pref="191" max="-2" attributes="0"/>
+                      <EmptySpace min="-2" pref="58" max="-2" attributes="0"/>
                       <Component id="jLabel4" min="-2" max="-2" attributes="0"/>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Component id="field_new" min="-2" pref="141" max="-2" attributes="0"/>
-                      <EmptySpace min="-2" pref="34" max="-2" attributes="0"/>
+                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Component id="button_new" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace min="-2" pref="111" max="-2" attributes="0"/>
+                      <Component id="jLabel7" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                      <Component id="field_rename" min="-2" pref="143" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="button_rename" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace min="-2" pref="37" max="-2" attributes="0"/>
@@ -63,6 +69,9 @@
                   <Component id="field_new" linkSize="2" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="jLabel4" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="button_new" linkSize="2" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="jLabel7" linkSize="5" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="field_rename" linkSize="5" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="button_rename" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace max="32767" attributes="0"/>
               <Component id="jPanel3" min="-2" max="-2" attributes="0"/>
@@ -214,6 +223,9 @@
                   <StringArray count="0"/>
                 </Property>
               </Properties>
+              <Events>
+                <EventHandler event="mousePressed" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="list_filesMousePressed"/>
+              </Events>
               <AuxValues>
                 <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
               </AuxValues>
@@ -263,7 +275,7 @@
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="button_delete" linkSize="1" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="button_search" linkSize="1" min="-2" max="-2" attributes="0"/>
+                  <Component id="button_renameFile" linkSize="1" min="-2" max="-2" attributes="0"/>
                   <EmptySpace min="-2" pref="21" max="-2" attributes="0"/>
               </Group>
           </Group>
@@ -275,7 +287,7 @@
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="button_parent" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="button_enter" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="button_search" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="button_renameFile" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="button_add_file" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="button_delete" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="button_read" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -303,12 +315,12 @@
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="button_enterActionPerformed"/>
           </Events>
         </Component>
-        <Component class="javax.swing.JButton" name="button_search">
+        <Component class="javax.swing.JButton" name="button_renameFile">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Search Files"/>
+            <Property name="text" type="java.lang.String" value="Rename File"/>
           </Properties>
           <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="button_searchActionPerformed"/>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="button_renameFileActionPerformed"/>
           </Events>
         </Component>
         <Component class="javax.swing.JButton" name="button_add_file">
@@ -366,6 +378,21 @@
       </Properties>
     </Component>
     <Component class="javax.swing.JTextField" name="field_currentpath">
+    </Component>
+    <Component class="javax.swing.JLabel" name="jLabel7">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Rename :"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JTextField" name="field_rename">
+    </Component>
+    <Component class="javax.swing.JButton" name="button_rename">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Rename"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="button_renameActionPerformed"/>
+      </Events>
     </Component>
   </SubComponents>
 </Form>

@@ -31,6 +31,7 @@ public class RMIFileBrowerGUI extends javax.swing.JFrame {
     private String currentPath = "";
     private String add = "";
     private int lvl = 0;
+    private String toRename = "";
 
     private String pathLvL1 = "";
     private String pathLvL2 = "";
@@ -54,10 +55,12 @@ public class RMIFileBrowerGUI extends javax.swing.JFrame {
         button_enter.setEnabled(false);
         button_parent.setEnabled(false);
         button_read.setEnabled(false);
-        button_search.setEnabled(false);
+        button_renameFile.setEnabled(false);
         button_new.setEnabled(false);
         field_new.setEnabled(false);
         field_currentpath.setEnabled(false);
+        field_rename.setEnabled(false);
+        button_rename.setEnabled(false);
     }
 
     /**
@@ -86,7 +89,7 @@ public class RMIFileBrowerGUI extends javax.swing.JFrame {
         jPanel3 = new javax.swing.JPanel();
         button_parent = new javax.swing.JButton();
         button_enter = new javax.swing.JButton();
-        button_search = new javax.swing.JButton();
+        button_renameFile = new javax.swing.JButton();
         button_add_file = new javax.swing.JButton();
         button_delete = new javax.swing.JButton();
         button_read = new javax.swing.JButton();
@@ -96,6 +99,9 @@ public class RMIFileBrowerGUI extends javax.swing.JFrame {
         button_new = new javax.swing.JButton();
         jLabel6 = new javax.swing.JLabel();
         field_currentpath = new javax.swing.JTextField();
+        jLabel7 = new javax.swing.JLabel();
+        field_rename = new javax.swing.JTextField();
+        button_rename = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -168,6 +174,11 @@ public class RMIFileBrowerGUI extends javax.swing.JFrame {
 
         jPanel2.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
+        list_files.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                list_filesMousePressed(evt);
+            }
+        });
         jScrollPane1.setViewportView(list_files);
 
         display_area.setColumns(20);
@@ -205,10 +216,10 @@ public class RMIFileBrowerGUI extends javax.swing.JFrame {
             }
         });
 
-        button_search.setText("Search Files");
-        button_search.addActionListener(new java.awt.event.ActionListener() {
+        button_renameFile.setText("Rename File");
+        button_renameFile.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                button_searchActionPerformed(evt);
+                button_renameFileActionPerformed(evt);
             }
         });
 
@@ -258,11 +269,11 @@ public class RMIFileBrowerGUI extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(button_delete)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(button_search)
+                .addComponent(button_renameFile)
                 .addGap(21, 21, 21))
         );
 
-        jPanel3Layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {button_add_file, button_delete, button_enter, button_parent, button_search});
+        jPanel3Layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {button_add_file, button_delete, button_enter, button_parent, button_renameFile});
 
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -271,7 +282,7 @@ public class RMIFileBrowerGUI extends javax.swing.JFrame {
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(button_parent)
                     .addComponent(button_enter)
-                    .addComponent(button_search)
+                    .addComponent(button_renameFile)
                     .addComponent(button_add_file)
                     .addComponent(button_delete)
                     .addComponent(button_read)
@@ -290,6 +301,15 @@ public class RMIFileBrowerGUI extends javax.swing.JFrame {
 
         jLabel6.setText("Current path :");
 
+        jLabel7.setText("Rename :");
+
+        button_rename.setText("Rename");
+        button_rename.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                button_renameActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -300,12 +320,18 @@ public class RMIFileBrowerGUI extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(191, 191, 191)
+                        .addGap(58, 58, 58)
                         .addComponent(jLabel4)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(field_new, javax.swing.GroupLayout.PREFERRED_SIZE, 141, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(34, 34, 34)
-                        .addComponent(button_new))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(button_new)
+                        .addGap(111, 111, 111)
+                        .addComponent(jLabel7)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(field_rename, javax.swing.GroupLayout.PREFERRED_SIZE, 143, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(button_rename))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(37, 37, 37)
                         .addComponent(jLabel6)
@@ -327,12 +353,17 @@ public class RMIFileBrowerGUI extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(field_new, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel4)
-                    .addComponent(button_new))
+                    .addComponent(button_new)
+                    .addComponent(jLabel7)
+                    .addComponent(field_rename, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(button_rename))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         layout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {button_new, field_new});
+
+        layout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {field_rename, jLabel7});
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -359,18 +390,13 @@ public class RMIFileBrowerGUI extends javax.swing.JFrame {
             Logger.getLogger(RMIFileBrowerGUI.class.getName()).log(Level.SEVERE, null, ex);
         }
         this.stop();
-        button_enter.setEnabled(true);
         button_add_file.setEnabled(true);
-        button_search.setEnabled(true);
-        button_delete.setEnabled(true);
 
         lvl = 0;
         System.out.println("Level begin = " + lvl);
     }//GEN-LAST:event_button_connectActionPerformed
 
     private void button_parentActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_parentActionPerformed
-        button_read.setEnabled(false);
-        button_enter.setEnabled(true);
         model.clear();
 
         ArrayList<File> strings;
@@ -381,24 +407,28 @@ public class RMIFileBrowerGUI extends javax.swing.JFrame {
                     for (File string : strings) {
                         model.addElement(string.toString());
                     }
+                    field_currentpath.setText("files/");
                     break;
                 case 2:
                     strings = fileServer.getFiles(pathLvL1);
                     for (File string : strings) {
                         model.addElement(string.toString());
                     }
+                    field_currentpath.setText("files/"+pathLvL1);
                     break;
                 case 3:
                     strings = fileServer.getFiles(pathLvL2);
                     for (File string : strings) {
                         model.addElement(string.toString());
                     }
+                    field_currentpath.setText("files/"+pathLvL2);
                     break;
                 default:
                     strings = fileServer.getFiles(pathLvL3);
                     for (File string : strings) {
                         model.addElement(string.toString());
                     }
+                    field_currentpath.setText("files/"+pathLvL3);
                     break;
             }
         } catch (RemoteException ex) {
@@ -411,11 +441,11 @@ public class RMIFileBrowerGUI extends javax.swing.JFrame {
         } else {
             button_parent.setEnabled(false);
         }
+        button_renameFile.setEnabled(false);
+        button_delete.setEnabled(false);
     }//GEN-LAST:event_button_parentActionPerformed
 
     private void button_enterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_enterActionPerformed
-        button_read.setEnabled(true);
-
         currentPath = list_files.getSelectedValue();
         Matcher mm = patdir.matcher(currentPath);
         if (mm.find()) {
@@ -433,6 +463,7 @@ public class RMIFileBrowerGUI extends javax.swing.JFrame {
                         model.addElement(string.toString());
                         pathLvL1 = currentDirr;
                         System.out.println("pathLvL1 = " + pathLvL1);
+                        field_currentpath.setText("files/"+pathLvL1);
                         break;
                     case 1:
                         m = patdir.matcher(string.toString());
@@ -442,6 +473,7 @@ public class RMIFileBrowerGUI extends javax.swing.JFrame {
                         }
                         pathLvL2 = currentDirr;
                         System.out.println("pathLvL2 = " + pathLvL2);
+                        field_currentpath.setText("files/"+pathLvL2);
                         break;
                     case 2:
                         m = patdir.matcher(string.toString());
@@ -451,6 +483,7 @@ public class RMIFileBrowerGUI extends javax.swing.JFrame {
                         }
                         pathLvL3 = currentDirr;
                         System.out.println("pathLvL3 = " + pathLvL3);
+                        field_currentpath.setText("files/"+pathLvL3);
                         break;
                     default:
                         m = patdir.matcher(string.toString());
@@ -471,24 +504,30 @@ public class RMIFileBrowerGUI extends javax.swing.JFrame {
         } else {
             button_parent.setEnabled(false);
         }
+        refresh();
+        button_renameFile.setEnabled(false);
+        button_delete.setEnabled(false);
     }//GEN-LAST:event_button_enterActionPerformed
 
-    private void button_searchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_searchActionPerformed
-        JFileChooser fileChooser = new JFileChooser();
-        fileChooser.setVisible(true);
-    }//GEN-LAST:event_button_searchActionPerformed
+    private void button_renameFileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_renameFileActionPerformed
+        field_rename.setEnabled(true);
+        button_rename.setEnabled(true);
+        toRename = list_files.getSelectedValue();
+        stopAddOrRename();
+    }//GEN-LAST:event_button_renameFileActionPerformed
 
     private void button_add_fileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_add_fileActionPerformed
         field_new.setEnabled(true);
         button_new.setEnabled(true);
         add = "file";
-        stopAdd();
+        stopAddOrRename();
     }//GEN-LAST:event_button_add_fileActionPerformed
 
     private void button_deleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_deleteActionPerformed
         String toDelete = list_files.getSelectedValue();
         try {
             fileServer.deleteFile(toDelete);
+            refresh();
         } catch (RemoteException ex) {
             Logger.getLogger(RMIFileBrowerGUI.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -557,14 +596,50 @@ public class RMIFileBrowerGUI extends javax.swing.JFrame {
         button_new.setEnabled(false);
         field_new.setText("");
         setEnabled();
+        refresh();
     }//GEN-LAST:event_button_newActionPerformed
 
     private void button_add_directoryActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_add_directoryActionPerformed
         field_new.setEnabled(true);
         button_new.setEnabled(true);
         add = "dir";
-        stopAdd();
+        stopAddOrRename();
     }//GEN-LAST:event_button_add_directoryActionPerformed
+
+    private void button_renameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_renameActionPerformed
+        String str = field_rename.getText();
+        if ("".equals(str)) {
+            System.out.println("The new name cannot be null");
+        } else {
+            try {
+                fileServer.renameFile(toRename, str);
+                refresh();
+            } catch (RemoteException ex) {
+                Logger.getLogger(RMIFileBrowerGUI.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        setEnabled();
+        button_rename.setEnabled(false);
+        field_rename.setEnabled(false);
+        field_rename.setText("");
+    }//GEN-LAST:event_button_renameActionPerformed
+
+    private void list_filesMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_list_filesMousePressed
+        String str = list_files.getSelectedValue();
+        try {
+            if (fileServer.isFile(str)) {
+                button_read.setEnabled(true);
+                button_enter.setEnabled(false);
+            } else {
+                button_read.setEnabled(false);
+                button_enter.setEnabled(true);
+            }
+        } catch (RemoteException ex) {
+            Logger.getLogger(RMIFileBrowerGUI.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        button_renameFile.setEnabled(true);
+        button_delete.setEnabled(true);
+    }//GEN-LAST:event_list_filesMousePressed
 
     private void stop() {
         field_name.setEnabled(false);
@@ -575,26 +650,70 @@ public class RMIFileBrowerGUI extends javax.swing.JFrame {
         button_read.setEnabled(false);
     }
 
-    private void stopAdd() {
+    private void stopAddOrRename() {
         button_add_directory.setEnabled(false);
         button_add_file.setEnabled(false);
         button_delete.setEnabled(false);
         button_enter.setEnabled(false);
         button_parent.setEnabled(false);
         button_read.setEnabled(false);
-        button_search.setEnabled(false);
+        button_renameFile.setEnabled(false);
     }
 
     private void setEnabled() {
         button_add_directory.setEnabled(true);
         button_add_file.setEnabled(true);
         button_delete.setEnabled(true);
-        button_enter.setEnabled(true);
+        button_enter.setEnabled(false);
         if (lvl != 0) {
             button_parent.setEnabled(true);
         }
         button_read.setEnabled(false);
-        button_search.setEnabled(false);
+        button_renameFile.setEnabled(true);
+        button_rename.setEnabled(false);
+    }
+
+    private void refresh() {
+        model.clear();
+        try {
+            ArrayList<File> strings = fileServer.getFiles(currentDirr);
+            Matcher m;
+            for (File string : strings) {
+                switch (lvl) {
+                    case 0:
+                        model.addElement(string.toString());
+                        break;
+                    case 1:
+                        m = patdir.matcher(string.toString());
+                        if (m.find()) {
+                            model.addElement(string.toString());
+                            System.out.println("case 1, group 1 = " + m.group(1));
+                        }
+                        break;
+                    case 2:
+                        m = patdir.matcher(string.toString());
+                        if (m.find()) {
+                            model.addElement(string.toString());
+                            System.out.println("case 2, group 1 = " + m.group(1));
+                        }
+                        break;
+                    default:
+                        m = patdir.matcher(string.toString());
+                        if (m.find()) {
+                            model.addElement(string.toString());
+                        }
+                        break;
+                }
+            }
+            list_files.setModel(model);
+        } catch (RemoteException ex) {
+            Logger.getLogger(RMIFileBrowerGUI.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        if (lvl != 0) {
+            button_parent.setEnabled(true);
+        } else {
+            button_parent.setEnabled(false);
+        }
     }
 
     private FileServer findFileServer(String service) throws NotBoundException, MalformedURLException, RemoteException {
@@ -646,12 +765,14 @@ public class RMIFileBrowerGUI extends javax.swing.JFrame {
     private javax.swing.JButton button_new;
     private javax.swing.JButton button_parent;
     private javax.swing.JButton button_read;
-    private javax.swing.JButton button_search;
+    private javax.swing.JButton button_rename;
+    private javax.swing.JButton button_renameFile;
     private javax.swing.JTextArea display_area;
     private javax.swing.JTextField field_currentpath;
     private javax.swing.JTextField field_name;
     private javax.swing.JTextField field_new;
     private javax.swing.JTextField field_port;
+    private javax.swing.JTextField field_rename;
     private javax.swing.JTextField field_servername;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
@@ -659,6 +780,7 @@ public class RMIFileBrowerGUI extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;

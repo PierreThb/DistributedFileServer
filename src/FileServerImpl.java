@@ -65,11 +65,11 @@ public class FileServerImpl extends UnicastRemoteObject implements FileServer {
         }
 
         if (file.isDirectory()) {
-            System.out.println("Can not delete a directory, you only can delete a file");
+            System.out.println("Can not delete a directory, you only can delete a file ! \n");
         } else if (file.delete()) {
-            System.out.println("File deleted !");
+            System.out.println("File deleted !\n");
         } else {
-            System.out.println("Problem, file not deleted !");
+            System.out.println("Problem, file not deleted !\n");
         }
     }
 
@@ -93,7 +93,7 @@ public class FileServerImpl extends UnicastRemoteObject implements FileServer {
 
     @Override
     public String helloClient(String name) throws RemoteException {
-        return "Here is the server, welcome " + name;
+        return "Hello from the server, welcome " + name;
     }
 
     @Override
@@ -101,17 +101,17 @@ public class FileServerImpl extends UnicastRemoteObject implements FileServer {
         if (isDir) {
             File file = new File("files/" + parent + "/" + filename);
             if (file.mkdir()) {
-                System.out.println("Directory is created!");
+                System.out.println("Directory created!\n");
             } else {
-                System.out.println("Directory already exists.");
+                System.out.println("Problem, directory not created !\n");
             }
         } else if (parent.equals("")) {
             File file = new File("files/" + filename);
             try {
                 if (file.createNewFile()) {
-                    System.out.println("File is created!");
+                    System.out.println("File created !\n");
                 } else {
-                    System.out.println("File already exists.");
+                    System.out.println("Problem file not created !\n");
                 }
             } catch (IOException ex) {
                 Logger.getLogger(FileServerImpl.class.getName()).log(Level.SEVERE, null, ex);
@@ -120,9 +120,9 @@ public class FileServerImpl extends UnicastRemoteObject implements FileServer {
             File file = new File("files/" + parent + "/" + filename);
             try {
                 if (file.createNewFile()) {
-                    System.out.println("File is created!");
+                    System.out.println("File created ! \n");
                 } else {
-                    System.out.println("File already exists.");
+                    System.out.println("Problem, file not created ! \n");
                 }
             } catch (IOException ex) {
                 Logger.getLogger(FileServerImpl.class.getName()).log(Level.SEVERE, null, ex);
@@ -131,8 +131,53 @@ public class FileServerImpl extends UnicastRemoteObject implements FileServer {
     }
 
     @Override
-    public boolean isFile(String filename, String parent) throws RemoteException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public void renameFile(String filename, String newName) throws RemoteException {
+        String[] parts = filename.split("[\\\\]");
+        int size = parts.length;
+        File oldFile = null;
+        File newFile = null;
+        switch (size) {
+            case 2:
+                oldFile = new File("files/" + parts[size - 1]);
+                newFile = new File("files/" + newName);
+                break;
+            case 3:
+                oldFile = new File("files/" + parts[size - 2] + "/" + parts[size - 1]);
+                newFile = new File("files/" + parts[size - 2] + "/" + newName);
+                break;
+            case 4:
+                oldFile = new File("files/" + parts[size - 3] + "/" + parts[size - 2] + "/" + parts[size - 1]);
+                newFile = new File("files/" + parts[size - 3] + "/" + parts[size - 2] + "/" + newName);
+                break;
+            default:
+                break;
+        }
+        if (oldFile.renameTo(newFile)) {
+            System.out.println("File renamed !\n");
+        } else {
+            System.out.println("Problem, file not renamed !\n");
+        }
     }
 
+    @Override
+    public boolean isFile(String filename) throws RemoteException {
+        String[] parts = filename.split("[\\\\]");
+        int size = parts.length;
+        File file = null;
+        switch (size) {
+            case 2:
+                file = new File("files/" + parts[size - 1]);
+                break;
+            case 3:
+                file = new File("files/" + parts[size - 2] + "/" + parts[size - 1]);
+                break;
+            case 4:
+                file = new File("files/" + parts[size - 3] + "/" + parts[size - 2] + "/" + parts[size - 1]);
+                break;
+            default:
+                break;
+        }
+        System.out.println("it's a file : "+file.isFile()+"\n");
+        return file.isFile();
+    }
 }

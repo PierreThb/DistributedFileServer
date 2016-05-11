@@ -25,6 +25,8 @@ public interface FileServer extends Remote {
     public void createFile(String filename, String parent, boolean isDir) throws RemoteException;
 
     public ArrayList<String> openReadFile(String filename) throws RemoteException;
-    
-    public boolean isFile(String filename, String parent) throws RemoteException;
+
+    public void renameFile(String filename, String newName) throws RemoteException;
+
+    public boolean isFile(String filename) throws RemoteException;
 }
