@@ -18,8 +18,8 @@ public class RMIFileServer {
 
     public static void main(String[] args) {
         try {
-            String host = "localhost";
-            String port = "1099";
+            String host = "localhost"; /* address */
+            String port = "1099"; /* port */
             FileServerImpl fsi = new FileServerImpl();
             if (args.length == 1) {
                 host = args[0];

@@ -5,14 +5,11 @@ import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
-import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.swing.DefaultListModel;
-import javax.swing.JFileChooser;
-import java.util.List;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -20,22 +17,20 @@ import java.util.List;
  * and open the template in the editor.
  */
 /**
+ * Class for the RMIFileBrowerGUI
  *
  * @author Pierre
  */
 public class RMIFileBrowerGUI extends javax.swing.JFrame {
 
+    /* Attributes */
     private FileServer fileServer;
-    DefaultListModel model = new DefaultListModel();
+    private final DefaultListModel model = new DefaultListModel();
     private String currentDirr = "";
     private String currentPath = "";
     private String add = "";
     private int lvl = 0;
     private String toRename = "";
-
-    private String pathLvL1 = "";
-    private String pathLvL2 = "";
-    private String pathLvL3 = "";
 
     /* Pattern for current dir*/
     String pattern = "^files.([\\d\\D]+)$"; //files.dir
@@ -44,6 +39,11 @@ public class RMIFileBrowerGUI extends javax.swing.JFrame {
     /* Pattern to get back */
     String patback = "^([^\\/]+)\\/(.*)$";
     Pattern patb = Pattern.compile(patback);
+    /* this pattern doesn't work unfortunetly so we had to use a system with different lvl (not easy to maintain at all) */
+
+    private String pathLvL1 = "";
+    private String pathLvL2 = "";
+    private String pathLvL3 = "";
 
     /**
      * Creates new form RMIFileBrowser
@@ -368,6 +368,9 @@ public class RMIFileBrowerGUI extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    /* 
+    Function for when a client connect to the same address as the server 
+    */
     private void button_connectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_connectActionPerformed
         String str = null;
         ArrayList<File> folders = null;
@@ -393,9 +396,11 @@ public class RMIFileBrowerGUI extends javax.swing.JFrame {
         button_add_file.setEnabled(true);
 
         lvl = 0;
-        System.out.println("Level begin = " + lvl);
     }//GEN-LAST:event_button_connectActionPerformed
 
+    /* 
+    Function to navigate back from a Directory
+    */
     private void button_parentActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_parentActionPerformed
         model.clear();
 
@@ -414,21 +419,21 @@ public class RMIFileBrowerGUI extends javax.swing.JFrame {
                     for (File string : strings) {
                         model.addElement(string.toString());
                     }
-                    field_currentpath.setText("files/"+pathLvL1);
+                    field_currentpath.setText("files/" + pathLvL1);
                     break;
                 case 3:
                     strings = fileServer.getFiles(pathLvL2);
                     for (File string : strings) {
                         model.addElement(string.toString());
                     }
-                    field_currentpath.setText("files/"+pathLvL2);
+                    field_currentpath.setText("files/" + pathLvL2);
                     break;
                 default:
                     strings = fileServer.getFiles(pathLvL3);
                     for (File string : strings) {
                         model.addElement(string.toString());
                     }
-                    field_currentpath.setText("files/"+pathLvL3);
+                    field_currentpath.setText("files/" + pathLvL3);
                     break;
             }
         } catch (RemoteException ex) {
@@ -445,15 +450,16 @@ public class RMIFileBrowerGUI extends javax.swing.JFrame {
         button_delete.setEnabled(false);
     }//GEN-LAST:event_button_parentActionPerformed
 
+    /*
+    Function to navigate into a directory
+    */
     private void button_enterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_enterActionPerformed
         currentPath = list_files.getSelectedValue();
         Matcher mm = patdir.matcher(currentPath);
         if (mm.find()) {
             currentDirr = mm.group(1);
-            System.out.println("group 1 curr dir selected value = " + currentDirr);
         }
         model.clear();
-        System.out.println("Level before = " + lvl);
         try {
             ArrayList<File> strings = fileServer.getFiles(currentDirr);
             Matcher m;
@@ -462,28 +468,23 @@ public class RMIFileBrowerGUI extends javax.swing.JFrame {
                     case 0:
                         model.addElement(string.toString());
                         pathLvL1 = currentDirr;
-                        System.out.println("pathLvL1 = " + pathLvL1);
-                        field_currentpath.setText("files/"+pathLvL1);
+                        field_currentpath.setText("files/" + pathLvL1);
                         break;
                     case 1:
                         m = patdir.matcher(string.toString());
                         if (m.find()) {
                             model.addElement(string.toString());
-                            System.out.println("case 1, group 1 = " + m.group(1));
                         }
                         pathLvL2 = currentDirr;
-                        System.out.println("pathLvL2 = " + pathLvL2);
-                        field_currentpath.setText("files/"+pathLvL2);
+                        field_currentpath.setText("files/" + pathLvL2);
                         break;
                     case 2:
                         m = patdir.matcher(string.toString());
                         if (m.find()) {
                             model.addElement(string.toString());
-                            System.out.println("case 2, group 1 = " + m.group(1));
                         }
                         pathLvL3 = currentDirr;
-                        System.out.println("pathLvL3 = " + pathLvL3);
-                        field_currentpath.setText("files/"+pathLvL3);
+                        field_currentpath.setText("files/" + pathLvL3);
                         break;
                     default:
                         m = patdir.matcher(string.toString());
@@ -498,7 +499,6 @@ public class RMIFileBrowerGUI extends javax.swing.JFrame {
             Logger.getLogger(RMIFileBrowerGUI.class.getName()).log(Level.SEVERE, null, ex);
         }
         lvl++;
-        System.out.println("Level after = " + lvl + "\n");
         if (lvl != 0) {
             button_parent.setEnabled(true);
         } else {
@@ -509,6 +509,9 @@ public class RMIFileBrowerGUI extends javax.swing.JFrame {
         button_delete.setEnabled(false);
     }//GEN-LAST:event_button_enterActionPerformed
 
+    /* 
+    Function to rename a file
+    */
     private void button_renameFileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_renameFileActionPerformed
         field_rename.setEnabled(true);
         button_rename.setEnabled(true);
@@ -516,6 +519,9 @@ public class RMIFileBrowerGUI extends javax.swing.JFrame {
         stopAddOrRename();
     }//GEN-LAST:event_button_renameFileActionPerformed
 
+    /*
+    Function to when want to add a new file
+    */
     private void button_add_fileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_add_fileActionPerformed
         field_new.setEnabled(true);
         button_new.setEnabled(true);
@@ -523,6 +529,9 @@ public class RMIFileBrowerGUI extends javax.swing.JFrame {
         stopAddOrRename();
     }//GEN-LAST:event_button_add_fileActionPerformed
 
+    /*
+    Function when want to delete a file 
+    */
     private void button_deleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_deleteActionPerformed
         String toDelete = list_files.getSelectedValue();
         try {
@@ -533,6 +542,9 @@ public class RMIFileBrowerGUI extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_button_deleteActionPerformed
 
+    /*
+    Function to read file content 
+    */
     private void button_readActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_readActionPerformed
         ArrayList<String> str = null;
         String file = list_files.getSelectedValue();
@@ -548,6 +560,9 @@ public class RMIFileBrowerGUI extends javax.swing.JFrame {
         display_area.setText(mystring);
     }//GEN-LAST:event_button_readActionPerformed
 
+    /*
+    Function when ok to add the new file or directory
+    */
     private void button_newActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_newActionPerformed
         if (add.equals("file")) {
             try {
@@ -599,6 +614,9 @@ public class RMIFileBrowerGUI extends javax.swing.JFrame {
         refresh();
     }//GEN-LAST:event_button_newActionPerformed
 
+    /*
+    Function when want to add a new directory
+    */
     private void button_add_directoryActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_add_directoryActionPerformed
         field_new.setEnabled(true);
         button_new.setEnabled(true);
@@ -606,6 +624,9 @@ public class RMIFileBrowerGUI extends javax.swing.JFrame {
         stopAddOrRename();
     }//GEN-LAST:event_button_add_directoryActionPerformed
 
+    /*
+    Function when want to rename a file or a directory
+    */
     private void button_renameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_renameActionPerformed
         String str = field_rename.getText();
         if ("".equals(str)) {
@@ -624,6 +645,9 @@ public class RMIFileBrowerGUI extends javax.swing.JFrame {
         field_rename.setText("");
     }//GEN-LAST:event_button_renameActionPerformed
 
+    /*
+    Action listener for when the list of file is clicked
+    */
     private void list_filesMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_list_filesMousePressed
         String str = list_files.getSelectedValue();
         try {
@@ -641,6 +665,7 @@ public class RMIFileBrowerGUI extends javax.swing.JFrame {
         button_delete.setEnabled(true);
     }//GEN-LAST:event_list_filesMousePressed
 
+    /* function to manage buttons of the GUI */
     private void stop() {
         field_name.setEnabled(false);
         field_port.setEnabled(false);
@@ -649,7 +674,8 @@ public class RMIFileBrowerGUI extends javax.swing.JFrame {
         button_parent.setEnabled(false);
         button_read.setEnabled(false);
     }
-
+    
+    /* function to manage input and button of the GUI */
     private void stopAddOrRename() {
         button_add_directory.setEnabled(false);
         button_add_file.setEnabled(false);
@@ -660,6 +686,7 @@ public class RMIFileBrowerGUI extends javax.swing.JFrame {
         button_renameFile.setEnabled(false);
     }
 
+    /* function to manage button of the GUI */
     private void setEnabled() {
         button_add_directory.setEnabled(true);
         button_add_file.setEnabled(true);
@@ -673,6 +700,7 @@ public class RMIFileBrowerGUI extends javax.swing.JFrame {
         button_rename.setEnabled(false);
     }
 
+    /* functio nto manage the GUI list of file */
     private void refresh() {
         model.clear();
         try {
@@ -687,14 +715,12 @@ public class RMIFileBrowerGUI extends javax.swing.JFrame {
                         m = patdir.matcher(string.toString());
                         if (m.find()) {
                             model.addElement(string.toString());
-                            System.out.println("case 1, group 1 = " + m.group(1));
                         }
                         break;
                     case 2:
                         m = patdir.matcher(string.toString());
                         if (m.find()) {
                             model.addElement(string.toString());
-                            System.out.println("case 2, group 1 = " + m.group(1));
                         }
                         break;
                     default:
@@ -716,6 +742,7 @@ public class RMIFileBrowerGUI extends javax.swing.JFrame {
         }
     }
 
+    /* function to get the FileServer instance of the related adress */
     private FileServer findFileServer(String service) throws NotBoundException, MalformedURLException, RemoteException {
         return (FileServer) Naming.lookup("rmi://" + service);
     }
